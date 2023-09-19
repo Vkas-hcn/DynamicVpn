@@ -5,9 +5,6 @@
 
     <data>
 
-        <variable
-            name="vm"
-            type="com.hcn.dynamicvpn.ui.guide.GuideViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

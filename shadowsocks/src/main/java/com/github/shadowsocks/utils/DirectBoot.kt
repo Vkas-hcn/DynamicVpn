@@ -5,9 +5,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import com.github.shadowsocks.Core
-import com.github.shadowsocks.Core.app
-import com.github.shadowsocks.bg.BaseService
+import sdfhl.CKOJ
+import sdfhl.CKOJ.app
+import sdfhm.CKON
 import com.github.shadowsocks.database.Profile
 import com.github.shadowsocks.database.ProfileManager
 import com.github.shadowsocks.preference.DataStore
@@ -18,7 +18,7 @@ import java.io.ObjectOutputStream
 
 @TargetApi(24)
 object DirectBoot : BroadcastReceiver() {
-    private val file = File(Core.deviceStorage.noBackupFilesDir, "directBootProfile")
+    private val file = File(CKOJ.deviceStorage.noBackupFilesDir, "directBootProfile")
     private var registered = false
 
     fun getDeviceProfile(): ProfileManager.ExpandedProfile? = try {
@@ -27,8 +27,8 @@ object DirectBoot : BroadcastReceiver() {
 
     fun clean() {
         file.delete()
-        File(Core.deviceStorage.noBackupFilesDir, BaseService.CONFIG_FILE).delete()
-        File(Core.deviceStorage.noBackupFilesDir, BaseService.CONFIG_FILE_UDP).delete()
+        File(CKOJ.deviceStorage.noBackupFilesDir, CKON.CONFIG_FILE).delete()
+        File(CKOJ.deviceStorage.noBackupFilesDir, CKON.CONFIG_FILE_UDP).delete()
     }
 
     /**

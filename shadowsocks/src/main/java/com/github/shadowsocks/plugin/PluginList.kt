@@ -23,7 +23,7 @@ package com.github.shadowsocks.plugin
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.widget.Toast
-import com.github.shadowsocks.Core.app
+import sdfhl.CKOJ.app
 
 class PluginList : ArrayList<Plugin>() {
     init {

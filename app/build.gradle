@@ -10,8 +10,8 @@ xmlClassGuard {
     findAabConstraintReferencedIds = false
     findAndConstraintReferencedIds = false
     mappingFile = file("xml-class-mapping.txt")
-    packageChange = ["com.test.greenstar": "mm.ee.mm.tt"]
-    moveDir = ["com.test.greenstar": "mm.ee.mm.tt"]
+    packageChange = ["com.hcn.dynamicvpn": "dy.na.mic"]
+    moveDir = ["com.hcn.dynamicvpn": "dy.na.mic"]
 }
 android {
     compileSdk rootProject.ext.android.compileSdk
