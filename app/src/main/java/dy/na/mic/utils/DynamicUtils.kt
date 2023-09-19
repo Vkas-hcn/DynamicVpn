@@ -174,7 +174,7 @@ object DynamicUtils {
                 return R.drawable.ic_fast
             }
             "United States" -> {
-                return R.drawable.ic_fast
+                return R.drawable.ic_unitedstates
             }
             "Australia" -> {
                 return R.drawable.australia
