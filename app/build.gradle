@@ -3,16 +3,9 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-parcelize'
     id 'kotlin-kapt'
-    id 'xml-class-guard'
+}
+// 导入RandomKeyGenerator类，如果使用HardCodeKeyGenerator，更换下类名
 
-}
-xmlClassGuard {
-    findAabConstraintReferencedIds = false
-    findAndConstraintReferencedIds = false
-    mappingFile = file("xml-class-mapping.txt")
-    packageChange = ["com.hcn.dynamicvpn": "dy.na.mic"]
-    moveDir = ["com.hcn.dynamicvpn": "dy.na.mic"]
-}
 android {
     compileSdk rootProject.ext.android.compileSdk
 
@@ -25,11 +18,14 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
+    // 注意请加上此配置
+    buildFeatures {
+        buildConfig = true
+    }
     buildTypes {
         debug {
-            minifyEnabled false
-            shrinkResources false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         release {
