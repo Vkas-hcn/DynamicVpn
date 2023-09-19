@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="android.view.View" />
+        <variable
+            name="homeGuideDynamic"
+            type="Boolean"
+            android:value="false" />
+        <variable
+            name="vpnStateDynamic"
+            type="Integer"
+            android:value="0" />
+        <variable
+            name="dhType"
+            type="Boolean"
+            android:value="false" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_main">
+
+        <include
+            android:id="@+id/in_main_title"
+            layout="@layout/layout_title_dynamic" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:onClick="toServiceListPage"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/in_main_title">
+
+            <ImageView
+                android:id="@+id/img_main_flag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_fast" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="current location"
+                    android:textColor="#FF956BBB"
+                    android:textSize="16sp"
+                    app:drawableEndCompat="@drawable/ic_service_be" />
+
+                <TextView
+                    android:id="@+id/tv_main_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="Faster server"
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="16sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="151dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="88dp"
+            android:onClick="linkVpn"
+            android:src="@drawable/ic_vpn_rote"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:visibility="@{homeGuideDynamic ? View.GONE : View.VISIBLE}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/imageView">
+
+            <TextView
+                android:id="@+id/tv_vpn_ic_state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="START"
+                android:visibility="@{vpnStateDynamic != 1 ? View.VISIBLE : View.GONE}"
+                android:textColor="#FFFFFFFF"
+                android:textSize="18sp" />
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/lav_vpn"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:visibility="@{vpnStateDynamic == 1 ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView"
+                app:layout_constraintEnd_toEndOf="@+id/imageView"
+                app:layout_constraintStart_toStartOf="@+id/imageView"
+                app:layout_constraintTop_toTopOf="@+id/imageView"
+                app:lottie_fileName="rota.json"
+                app:lottie_loop="true" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="39dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView">
+
+            <TextView
+                android:id="@+id/tv_state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Connecting..."
+                android:textColor="#80956BBB"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tv_timing"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="40dp"
+                android:text="00:00:00"
+                android:textColor="#80956BBB"
+                android:textSize="16sp" />
+        </LinearLayout>
+        <View
+            android:id="@+id/viewGuideMask"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#87000002"
+            android:onClick="clickMask"
+            android:visibility="@{homeGuideDynamic ? View.VISIBLE : View.GONE}" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lav_view_gu"
+            android:layout_width="201dp"
+            android:layout_height="105dp"
+            android:onClick="linkServiceGuide"
+            android:visibility="@{homeGuideDynamic ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView"
+            app:layout_constraintEnd_toEndOf="@+id/imageView"
+            app:layout_constraintStart_toStartOf="@+id/imageView"
+            app:layout_constraintTop_toTopOf="@+id/imageView"
+            app:lottie_fileName="guide.json"
+            app:lottie_loop="true" />
+        <include
+            android:id="@+id/in_home_db_dynamic"
+            layout="@layout/layout_dh_dynamic"
+            android:visibility="@{dhType ? View.VISIBLE : View.GONE}"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

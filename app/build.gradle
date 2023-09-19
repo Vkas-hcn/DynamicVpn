@@ -1,0 +1,94 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-parcelize'
+    id 'kotlin-kapt'
+    id 'xml-class-guard'
+
+}
+xmlClassGuard {
+    findAabConstraintReferencedIds = false
+    findAndConstraintReferencedIds = false
+    mappingFile = file("xml-class-mapping.txt")
+    packageChange = ["com.test.greenstar": "mm.ee.mm.tt"]
+    moveDir = ["com.test.greenstar": "mm.ee.mm.tt"]
+}
+android {
+    compileSdk rootProject.ext.android.compileSdk
+
+    defaultConfig {
+        applicationId "com.hcn.dynamicvpn"
+        minSdk rootProject.ext.android.minSdk
+        targetSdk rootProject.ext.android.targetSdk
+        versionCode rootProject.ext.android.versionCode
+        versionName rootProject.ext.android.versionName
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    dataBinding {
+        enabled = true
+    }
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+    implementation project(':shadowsocks')
+    api 'cat.ereza:customactivityoncrash:2.3.0'
+    implementation rootProject.ext.dependencies.androidUtilCode
+    implementation rootProject.ext.dependencies.coreKtx
+    implementation rootProject.ext.dependencies.fragmentKtx
+    implementation rootProject.ext.dependencies.lifeCycleKtx
+    implementation rootProject.ext.dependencies.liveDataKtx
+    implementation rootProject.ext.dependencies.viewModelKtx
+    implementation rootProject.ext.dependencies.appcompat
+    implementation rootProject.ext.dependencies.material
+    implementation rootProject.ext.dependencies.constraintlayout
+    implementation rootProject.ext.dependencies.coroutines
+    implementation rootProject.ext.dependencies.androidUtilCode
+    implementation rootProject.ext.dependencies.lottie
+    implementation platform(rootProject.ext.dependencies.firebaseBom)
+    implementation rootProject.ext.dependencies.firebaseConfigKtx
+    implementation rootProject.ext.dependencies.gmsAds
+    implementation rootProject.ext.dependencies.gson
+    implementation rootProject.ext.dependencies.rxpermissions
+    implementation rootProject.ext.dependencies.glide
+    implementation rootProject.ext.dependencies.transformations
+    implementation rootProject.ext.dependencies.moshi
+    kapt rootProject.ext.dependencies.moshiCodegen
+    implementation "com.android.installreferrer:installreferrer:2.2"
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+
+    implementation 'com.geyifeng.immersionbar:immersionbar:3.2.2'
+    implementation 'com.geyifeng.immersionbar:immersionbar-ktx:3.2.2'
+
+    implementation("com.facebook.android:facebook-android-sdk:12.3.0")
+
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation 'com.elvishew:xlog:1.10.1'
+
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
+
+}

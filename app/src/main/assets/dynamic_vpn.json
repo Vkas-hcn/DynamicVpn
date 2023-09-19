@@ -1,0 +1,18 @@
+[
+  {
+    "dynamic_password": "kRoqKuI4Wq0VpPxb2k2i",
+    "dynamic_protocol": "chacha20-ietf-poly1305",
+    "dynamic_port": 2761,
+    "dynamic_country": "Singapore",
+    "dynamic_city": "singapore",
+    "dynamic_ip": "8.8.8.8"
+  },
+  {
+    "dynamic_password": "kRoqKuI4Wq0VpPxb2k2i",
+    "dynamic_protocol": "chacha20-ietf-poly1305",
+    "dynamic_port": 2762,
+    "dynamic_country": "Japan",
+    "dynamic_city": "Tokyo",
+    "dynamic_ip": "1.1.1.1"
+  }
+]
