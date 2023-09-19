@@ -3,9 +3,23 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-parcelize'
     id 'kotlin-kapt'
+    id 'stringfog'
 }
 // 导入RandomKeyGenerator类，如果使用HardCodeKeyGenerator，更换下类名
-
+import com.github.megatronking.stringfog.plugin.kg.RandomKeyGenerator
+import com.github.megatronking.stringfog.plugin.StringFogMode
+stringfog {
+    // 必要：加解密库的实现类路径，需和上面配置的加解密算法库一致。
+    implementation 'com.github.megatronking.stringfog.xor.StringFogImpl'
+    // 可选：加密开关，默认开启。
+    enable true
+    // 可选（3.0版本新增）：指定密钥生成器，默认使用长度8的随机密钥（每个字符串均有不同随机密钥）,
+    // 也可以指定一个固定的密钥：HardCodeKeyGenerator("This is a key")
+    kg new RandomKeyGenerator()
+    // 可选（4.0版本新增）：用于控制字符串加密后在字节码中的存在形式, 默认为base64，
+    // 也可以使用text或者bytes
+    mode StringFogMode.base64
+}
 android {
     compileSdk rootProject.ext.android.compileSdk
 
@@ -24,8 +38,8 @@ android {
     }
     buildTypes {
         debug {
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         release {
@@ -72,8 +86,6 @@ dependencies {
     implementation rootProject.ext.dependencies.rxpermissions
     implementation rootProject.ext.dependencies.glide
     implementation rootProject.ext.dependencies.transformations
-    implementation rootProject.ext.dependencies.moshi
-    kapt rootProject.ext.dependencies.moshiCodegen
     implementation "com.android.installreferrer:installreferrer:2.2"
     implementation 'com.google.firebase:firebase-analytics-ktx'
 
@@ -81,10 +93,10 @@ dependencies {
     implementation 'com.geyifeng.immersionbar:immersionbar-ktx:3.2.2'
 
     implementation("com.facebook.android:facebook-android-sdk:12.3.0")
-
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation 'com.elvishew:xlog:1.10.1'
 
     implementation 'com.squareup.okhttp3:okhttp:4.9.1'
+    implementation 'com.github.megatronking.stringfog:xor:4.0.1'
+
 
 }

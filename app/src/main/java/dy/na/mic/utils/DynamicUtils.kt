@@ -8,7 +8,6 @@ import com.google.gson.reflect.TypeToken
 import dy.na.mic.R
 import dy.na.mic.bean.DynamicVpnBean
 import dy.na.mic.data.DataUtils
-import com.squareup.moshi.Json
 import okhttp3.*
 import java.io.IOException
 import java.net.HttpURLConnection
