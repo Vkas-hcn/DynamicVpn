@@ -11,6 +11,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.Lifecycle
 import com.blankj.utilcode.util.ActivityUtils
+import com.blankj.utilcode.util.NetworkUtils
 import com.elvishew.xlog.XLog
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.appopen.AppOpenAd
@@ -30,7 +31,9 @@ import dy.na.mic.R
 
 object AdDynamicUtils {
     fun loadOf(where: String) {
-        Load.of(where)?.load()
+        if(NetworkUtils.isConnected()){
+            Load.of(where)?.load()
+        }
     }
 
     fun resultOf(where: String): Any? {
