@@ -64,10 +64,10 @@ class CKOG(private val dataList: MutableList<DynamicVpnBean>) :
         // 将数据绑定到视图上
         if (item.dynamic_best == true) {
             holder.txtCountry.text = "Faster server"
-            holder.imgFlag.setImageResource(DynamicUtils.getFlagThroughCountryDynamic("Faster server"))
+            holder.imgFlag.setImageResource(DynamicUtils.getFlagCountryDynamic("Faster server"))
         } else {
             holder.txtCountry.text = String.format(item.dynamic_country + "-" + item.dynamic_city)
-            holder.imgFlag.setImageResource(DynamicUtils.getFlagThroughCountryDynamic(item.dynamic_country.toString()))
+            holder.imgFlag.setImageResource(DynamicUtils.getFlagCountryDynamic(item.dynamic_country.toString()))
         }
         if (item.dynamic_check == true) {
             holder.conItem.setBackgroundResource(R.drawable.bg_item_type)

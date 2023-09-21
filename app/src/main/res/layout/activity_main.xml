@@ -140,6 +140,30 @@
                 android:textColor="#80956BBB"
                 android:textSize="16sp" />
         </LinearLayout>
+        <FrameLayout
+            android:id="@+id/fl_ad"
+            android:layout_width="match_parent"
+            android:layout_height="228dp"
+            android:layout_margin="8dp"
+            android:visibility="gone"
+            android:background="@drawable/bg_ad"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <FrameLayout
+                android:id="@+id/dynamic_ad_frame"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <ImageView
+                android:id="@+id/img_dynamic_ad_frame"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_home_ad_oc" />
+        </FrameLayout>
         <View
             android:id="@+id/viewGuideMask"
             android:layout_width="match_parent"

@@ -12,14 +12,13 @@ import java.text.DecimalFormat
 
 object DynamicTimeUtils {
 
-    //判断一个时间在另一个时间之后
     fun dateAfterDate(startTime: String?, endTime: String?): Boolean {
         val format = SimpleDateFormat("yyyy-MM-dd")
         try {
             val startDate: Date = format.parse(startTime)
             val endDate: Date = format.parse(endTime)
-            val start: Long = startDate.getTime()
-            val end: Long = endDate.getTime()
+            val start: Long = startDate.time
+            val end: Long = endDate.time
             if (end > start) {
                 return true
             }
@@ -60,6 +59,26 @@ object DynamicTimeUtils {
         }
     }
 
+    fun isThresholdReached(): Boolean {
+        val clicksCount = DataUtils.clicksCountDynamic
+        val showCount = DataUtils.showsCountDynamic
+        if (clicksCount >= DynamicUtils.getLocalAdData().Lig_ophit || showCount >= DynamicUtils.getLocalAdData().Lig_acity) {
+            return true
+        }
+        return false
+    }
+
+    fun recordNumOfAdShowDyna() {
+        var showCount = DataUtils.showsCountDynamic
+        showCount++
+        DataUtils.showsCountDynamic = showCount
+    }
+
+    fun recordNumOfAdClickDyna() {
+        var clicksCount = DataUtils.clicksCountDynamic
+        clicksCount++
+        DataUtils.clicksCountDynamic = clicksCount
+    }
 
     private val job = Job()
     private val timerThread = CoroutineScope(job)
@@ -97,7 +116,7 @@ object DynamicTimeUtils {
     suspend fun endTiming(isP: Boolean = false) {
         DataUtils.LAST_TIME = formatDateNow()
         if (!isP) {
-//            P.toBuriedPointConnectionTimeMeteor("time_vpn_meteorem", skTime)
+            DynamicUtils.putPointTimeDynamic("Lig_felici", skTime)
         }
         skTime = 0
         isStopThread = true

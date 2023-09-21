@@ -1,19 +1,28 @@
 package sdfhi
 
 import android.view.KeyEvent
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
 import com.blankj.utilcode.util.GsonUtils
+import com.elvishew.xlog.XLog
 import com.google.gson.reflect.TypeToken
 import dy.na.mic.R
+import dy.na.mic.ad.AdDynamicUtils
 import dy.na.mic.base.BaseActivity
 import dy.na.mic.bean.DynamicVpnBean
 import dy.na.mic.data.DataUtils
 import dy.na.mic.databinding.ActivityResultDynamicBinding
 import dy.na.mic.utils.DynamicUtils
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
+import sdfhf.CKNO
 
-class CKNR : BaseActivity<ActivityResultDynamicBinding, CKOD>() ,CKOE{
+class CKNR : BaseActivity<ActivityResultDynamicBinding, CKOD>(), CKOE {
     private var isConnectionDynamic: Boolean = false
-
+    private var resultAdJobDynamic: Job? = null
+    var resultCall: CKOE? = null
+    fun setResultCallBack(resultCall: CKOE) {
+        this.resultCall = resultCall
+    }
     //当前服务器
     private lateinit var currentServerBeanDynamic: DynamicVpnBean
     override val implLayoutResId: Int
@@ -22,16 +31,41 @@ class CKNR : BaseActivity<ActivityResultDynamicBinding, CKOD>() ,CKOE{
         get() = CKOD()
 
     override fun initialize() {
-        model.setResultCallBack(this)
+        setResultCallBack(this)
         initializeCall()
     }
 
     override fun initData() {
-        initDataCall()
+        resultCall?.initDataCall()
+        DataUtils.nativeResultAdRefreshDynamic = true
     }
 
     private fun returnToHomePage() {
-        finish()
+        DynamicUtils.putPointDynamic("Lig_viron")
+        AdDynamicUtils.resultOf(DataUtils.ad_back).run {
+            if (this == null) {
+                finish()
+            } else {
+                model.showBackAdFun(this,this@CKNR)
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        AdDynamicUtils.loadOf(
+            where = DataUtils.ad_result
+        )
+        resultAdJobDynamic = lifecycleScope.launch(Dispatchers.Main) {
+            delay(200)
+            if (lifecycle.currentState != Lifecycle.State.RESUMED) {
+                return@launch
+            }
+            DynamicUtils.putPointDynamic("Lig_hette")
+            if (DataUtils.nativeResultAdRefreshDynamic) {
+                model.initResultAd(this@CKNR,binding)
+            }
+        }
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -44,7 +78,6 @@ class CKNR : BaseActivity<ActivityResultDynamicBinding, CKOD>() ,CKOE{
     override fun initializeCall() {
         val bundle = intent.extras
         isConnectionDynamic = bundle?.getBoolean(DataUtils.connectionDynamicStatus) == true
-
         currentServerBeanDynamic = runCatching {
             GsonUtils.fromJson<DynamicVpnBean>(
                 DataUtils.current_server_data_dynamic,
@@ -57,7 +90,7 @@ class CKNR : BaseActivity<ActivityResultDynamicBinding, CKOD>() ,CKOE{
         binding.inResultTitle.tvTitle.text = "Server"
         with(currentServerBeanDynamic) {
             binding.imgResultFlag.setImageResource(
-                DynamicUtils.getFlagThroughCountryDynamic(
+                DynamicUtils.getFlagCountryDynamic(
                     this.dynamic_country ?: ""
                 )
             )
@@ -73,6 +106,6 @@ class CKNR : BaseActivity<ActivityResultDynamicBinding, CKOD>() ,CKOE{
             binding.tvState.text = "Disconnected"
             binding.imgResultType.setImageResource(R.drawable.ic_result_disconnect)
         }
-//        BE.nativeAdRefreshDynamic =true
     }
+
 }

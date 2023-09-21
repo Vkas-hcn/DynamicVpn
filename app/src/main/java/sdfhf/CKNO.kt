@@ -33,6 +33,7 @@ import kotlinx.coroutines.launch
 //import com.elvishew.xlog.LogLevel
 import sdfhh.CKNQ
 import dy.na.mic.data.DataUtils
+import dy.na.mic.utils.DynamicUtils
 import sdfhg.CKNP
 
 
@@ -43,13 +44,9 @@ class CKNO : Application(), LifecycleObserver {
 
     companion object {
         lateinit var context: Context
-        var warmBoot = false
-
         var isBackDataDynamic = false
-
         var whetherBackgroundDynamic = false
 
-        var nativeAdRefreshDynamic = false
 
         var isConnectType = false
         var isGuideDynamic: Boolean = true
@@ -65,7 +62,7 @@ class CKNO : Application(), LifecycleObserver {
             AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
             Firebase.initialize(this)
             FirebaseApp.initializeApp(this)
-//            P.getReferInformation(this)
+            DynamicUtils.getReferInformationDynamic(this)
 //            val data = S.uuidValueDynamic
 //            if (data.isEmpty()) {
 //                S.uuidValueDynamic = UUID.randomUUID().toString()
@@ -79,7 +76,6 @@ class CKNO : Application(), LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onMoveToForeground() {
-        nativeAdRefreshDynamic = true
         job_og?.cancel()
         job_og = null
         if (whetherBackgroundDynamic && !isBackDataDynamic) {
@@ -101,10 +97,12 @@ class CKNO : Application(), LifecycleObserver {
 
     private fun jumpGuidePageDynamic() {
         whetherBackgroundDynamic = false
-        warmBoot = true
         val intent = Intent(top_activity_og, CKNP::class.java)
         intent.putExtra(DataUtils.returnDynamicCurrentPage, true)
         top_activity_og?.startActivity(intent)
+        DataUtils.nativeHomeAdRefreshDynamic = true
+        DataUtils.nativeResultAdRefreshDynamic = true
+        DataUtils.isHotHome = true
     }
 
     fun setActivityLifecycleDynamic(application: Application) {

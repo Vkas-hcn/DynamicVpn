@@ -20,7 +20,7 @@ object CKOP {
     /**
      * 默认黑名单
      */
-    private fun listGmsPackages(): List<String> {
+     fun listGmsPackages(): List<String> {
         return listOf(
             "com.google.android.gms",
             "com.google.android.ext.services",

@@ -7,11 +7,11 @@ import androidx.lifecycle.MutableLiveData
 import dy.na.mic.base.BaseViewModel
 import sdfhh.CKNQ
 
-class CKOA :BaseViewModel() {
-    var liveStartToMain= MutableLiveData<Boolean>()
+class CKOA : BaseViewModel() {
+    var liveStartToMain = MutableLiveData<Boolean>()
     var isCurrentPage: Boolean = false
-
-    fun jumpPageModel(activity: AppCompatActivity){
+    var isAdShowType: Int = 0
+    fun jumpPageModel(activity: AppCompatActivity) {
         if (!isCurrentPage) {
             val intent = Intent(activity, CKNQ::class.java)
             activity.startActivity(intent)

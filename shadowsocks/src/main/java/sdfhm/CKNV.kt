@@ -66,12 +66,15 @@ class CKNV : BaseVpnService(), CKON.Interface {
         } finally {
             try {
                 Os.close(this)
-            } catch (_: ErrnoException) { }
+            } catch (_: ErrnoException) {
+            }
         }
     }
 
-    private inner class ProtectWorker : ConcurrentLocalSocketListener("ShadowsocksVpnThread",
-            File(CKOJ.deviceStorage.noBackupFilesDir, "protect_path")) {
+    private inner class ProtectWorker : ConcurrentLocalSocketListener(
+        "ShadowsocksVpnThread",
+        File(CKOJ.deviceStorage.noBackupFilesDir, "protect_path")
+    ) {
         override fun acceptInternal(socket: LocalSocket) {
             if (socket.inputStream.read() == -1) return
             val success = socket.ancillaryFileDescriptors!!.single()!!.use { fd ->
@@ -92,7 +95,8 @@ class CKNV : BaseVpnService(), CKON.Interface {
             }
             try {
                 socket.outputStream.write(if (success) 0 else 1)
-            } catch (_: IOException) { }        // ignore connection early close
+            } catch (_: IOException) {
+            }        // ignore connection early close
         }
     }
 
@@ -103,21 +107,27 @@ class CKNV : BaseVpnService(), CKON.Interface {
     override val data = CKON.Data(this)
     override val tag: String get() = "ShadowsocksVpnService"
     override fun createNotification(profileName: String): CKOM =
-            CKOM(this, profileName, "service-vpn")
+        CKOM(this, profileName, "service-vpn")
 
     private var conn: ParcelFileDescriptor? = null
     private var worker: ProtectWorker? = null
     private var active = false
     private var metered = false
+
     @Volatile
     private var underlyingNetwork: Network? = null
         set(value) {
             field = value
             if (active) setUnderlyingNetworks(underlyingNetworks)
         }
-    private val underlyingNetworks get() =
-        // clearing underlyingNetworks makes Android 9 consider the network to be metered
-        if (Build.VERSION.SDK_INT == 28 && metered) null else underlyingNetwork?.let { arrayOf(it) }
+    private val underlyingNetworks
+        get() =
+            // clearing underlyingNetworks makes Android 9 consider the network to be metered
+            if (Build.VERSION.SDK_INT == 28 && metered) null else underlyingNetwork?.let {
+                arrayOf(
+                    it
+                )
+            }
 
     override fun onBind(intent: Intent) = when (intent.action) {
         SERVICE_INTERFACE -> super<BaseVpnService>.onBind(intent)
@@ -140,7 +150,12 @@ class CKNV : BaseVpnService(), CKON.Interface {
         Log.i(CKNV::class.simpleName, "onStartCommand")
         if (DataStore.serviceMode == Key.modeVpn) {
             if (prepare(this) != null) {
-                startActivity(Intent(this, CKNU::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                startActivity(
+                    Intent(
+                        this,
+                        CKNU::class.java
+                    ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                )
             } else return super<CKON.Interface>.onStartCommand(intent, flags, startId)
         }
         stopRunner()
@@ -149,9 +164,10 @@ class CKNV : BaseVpnService(), CKON.Interface {
 
     override suspend fun preInit() = DefaultNetworkListener.start(this) { underlyingNetwork = it }
     override suspend fun rawResolver(query: ByteArray) =
-            // no need to listen for network here as this is only used for forwarding local DNS queries.
-            // retries should be attempted by client.
-            DnsResolverCompat.resolveRaw(underlyingNetwork ?: throw IOException("no network"), query)
+    // no need to listen for network here as this is only used for forwarding local DNS queries.
+        // retries should be attempted by client.
+        DnsResolverCompat.resolveRaw(underlyingNetwork ?: throw IOException("no network"), query)
+
     override suspend fun openConnection(url: URL) = DefaultNetworkListener.get().openConnection(url)
 
     override suspend fun startProcesses() {
@@ -166,30 +182,19 @@ class CKNV : BaseVpnService(), CKON.Interface {
         val profile = data.proxy!!.profile
         val builder = Builder()
 //                .setConfigureIntent(CKOJ.configureIntent(this))
-                .setSession(profile.formattedName)
-                .setMtu(VPN_MTU)
-                .addAddress(PRIVATE_VLAN4_CLIENT, 30)
-                .addDnsServer(PRIVATE_VLAN4_ROUTER)
+            .setSession(profile.formattedName)
+            .setMtu(VPN_MTU)
+            .addAddress(PRIVATE_VLAN4_CLIENT, 30)
+            .addDnsServer(PRIVATE_VLAN4_ROUTER)
 
         if (profile.ipv6) builder.addAddress(PRIVATE_VLAN6_CLIENT, 126)
 
 //        CKOP.brand( builder, packageName)
-//        if (profile.proxyApps) {
-//            val me = packageName
-//        builder.addDisallowedApplication(me)
-//            profile.individual.split('\n')
-//                    .filter { it != me }
-//                    .forEach {
-//                        try {
-//                            if (profile.bypass) builder.addDisallowedApplication(it)
-//                            else builder.addAllowedApplication(it)
-//                        } catch (ex: PackageManager.NameNotFoundException) {
-//                            Timber.w(ex)
-//                        }
-//                    }
-//            if (!profile.bypass) builder.addAllowedApplication(me)
-//        }
-
+        (listOf(packageName) + CKOP.listGmsPackages())
+            .iterator()
+            .forEachRemaining {
+                runCatching { builder.addDisallowedApplication(it) }
+            }
         when (profile.route) {
             Acl.ALL, Acl.BYPASS_CHN, Acl.CUSTOM_RULES -> {
                 builder.addRoute("0.0.0.0", 0)
@@ -214,13 +219,15 @@ class CKNV : BaseVpnService(), CKON.Interface {
         val conn = builder.establish() ?: throw NullConnectionException()
         this.conn = conn
 
-        val cmd = arrayListOf(File(applicationInfo.nativeLibraryDir, CKOR.TUN2SOCKS).absolutePath,
-                "--netif-ipaddr", PRIVATE_VLAN4_ROUTER,
-                "--socks-server-addr", "${DataStore.listenAddress}:${DataStore.portProxy}",
-                "--tunmtu", VPN_MTU.toString(),
-                "--sock-path", "sock_path",
-                "--dnsgw", "127.0.0.1:${DataStore.portLocalDns}",
-                "--loglevel", "warning")
+        val cmd = arrayListOf(
+            File(applicationInfo.nativeLibraryDir, CKOR.TUN2SOCKS).absolutePath,
+            "--netif-ipaddr", PRIVATE_VLAN4_ROUTER,
+            "--socks-server-addr", "${DataStore.listenAddress}:${DataStore.portProxy}",
+            "--tunmtu", VPN_MTU.toString(),
+            "--sock-path", "sock_path",
+            "--dnsgw", "127.0.0.1:${DataStore.portLocalDns}",
+            "--loglevel", "warning"
+        )
         if (profile.ipv6) {
             cmd += "--netif-ip6addr"
             cmd += PRIVATE_VLAN6_ROUTER
@@ -242,7 +249,12 @@ class CKNV : BaseVpnService(), CKON.Interface {
         while (true) try {
             delay(50L shl tries)
             LocalSocket().use { localSocket ->
-                localSocket.connect(LocalSocketAddress(path, LocalSocketAddress.Namespace.FILESYSTEM))
+                localSocket.connect(
+                    LocalSocketAddress(
+                        path,
+                        LocalSocketAddress.Namespace.FILESYSTEM
+                    )
+                )
                 localSocket.setFileDescriptorsForSend(arrayOf(fd))
                 localSocket.outputStream.write(42)
             }

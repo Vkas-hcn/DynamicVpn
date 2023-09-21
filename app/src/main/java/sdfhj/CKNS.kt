@@ -11,6 +11,7 @@ import com.blankj.utilcode.util.GsonUtils
 import com.elvishew.xlog.XLog
 import com.google.gson.reflect.TypeToken
 import dy.na.mic.R
+import dy.na.mic.ad.AdDynamicUtils
 import dy.na.mic.base.BaseActivity
 import dy.na.mic.bean.DynamicVpnBean
 import dy.na.mic.data.DataUtils
@@ -19,9 +20,10 @@ import dy.na.mic.utils.DynamicTimeUtils
 import dy.na.mic.utils.DynamicUtils
 import dy.na.mic.utils.SharedFlowBus
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class CKNS : BaseActivity<ActivityListDynamicBinding, CKOH>(),CKOF {
+class CKNS : BaseActivity<ActivityListDynamicBinding, CKOH>(), CKOF {
     private lateinit var selectAdapter: CKOG
     private var ecServiceBeanList: MutableList<DynamicVpnBean> = ArrayList()
     private lateinit var adBean: DynamicVpnBean
@@ -43,7 +45,6 @@ class CKNS : BaseActivity<ActivityListDynamicBinding, CKOH>(),CKOF {
 
     override fun initialize() {
         model.setListCallback(this)
-
         val bundle = intent.extras
         checkSkServiceBean = DynamicVpnBean()
         whetherToConnect = bundle?.getBoolean(DataUtils.whetherDynamicConnected) == true
@@ -67,10 +68,21 @@ class CKNS : BaseActivity<ActivityListDynamicBinding, CKOH>(),CKOF {
     }
 
     override fun initData() {
+        AdDynamicUtils.loadOf(DataUtils.ad_back)
         initSelectRecyclerViewCall()
         getServerListDataCall()
     }
 
+    private fun showBackAd(it: Any) {
+        AdDynamicUtils.showFullScreenOf(
+            where = DataUtils.ad_back,
+            context = this,
+            res = it,
+            onShowCompleted = {
+                finish()
+            }
+        )
+    }
 
     private fun initSelectRecyclerView() {
         selectAdapter = CKOG(ecServiceBeanList)
@@ -85,12 +97,10 @@ class CKNS : BaseActivity<ActivityListDynamicBinding, CKOH>(),CKOF {
         })
     }
 
-
     /**
      * 选中服务器
      */
     private fun selectServer(position: Int) {
-
         if (model.isSelect(ecServiceBeanList, checkSkServiceBeanClick, position)) {
             if (!whetherToConnect) {
                 finish()
@@ -136,9 +146,13 @@ class CKNS : BaseActivity<ActivityListDynamicBinding, CKOH>(),CKOF {
      * 返回主页
      */
     private fun returnToHomePage() {
-//        if (PowerBackAd.displayBackAdvertisementPower(this) != 2) {
-        finish()
-//        }
+        AdDynamicUtils.resultOf(DataUtils.ad_back).run {
+            if (this == null) {
+                finish()
+            } else {
+                showBackAd(this)
+            }
+        }
     }
 
     /**
@@ -188,10 +202,10 @@ class CKNS : BaseActivity<ActivityListDynamicBinding, CKOH>(),CKOF {
 
     override fun onResume() {
         super.onResume()
-//        lifecycleScope.launch(Dispatchers.Main) {
-//            delay(300L)
-//            PowerUtils.putPointPower("ope_proof")
-//        }
+        lifecycleScope.launch(Dispatchers.Main) {
+            delay(300L)
+            DynamicUtils.putPointDynamic("Lig_plodous")
+        }
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -202,8 +216,6 @@ class CKNS : BaseActivity<ActivityListDynamicBinding, CKOH>(),CKOF {
     }
 
     override fun initializeCall() {
-        XLog.e("initializeCall")
-
     }
 
     override fun getServerListDataCall() {

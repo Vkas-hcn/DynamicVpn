@@ -30,6 +30,8 @@ import com.elvishew.xlog.XLog
 import sdfhl.CKOJ
 import sdfhm.CKON
 import com.google.gson.reflect.TypeToken
+import dy.na.mic.ad.AdBaseUtils
+import dy.na.mic.ad.AdDynamicUtils
 import sdfhf.CKNO
 import dy.na.mic.bean.DynamicVpnBean
 import dy.na.mic.data.DataUtils
@@ -39,10 +41,7 @@ import sdfhk.CKNT
 import dy.na.mic.utils.DynamicTimeUtils
 import dy.na.mic.utils.DynamicUtils
 import dy.na.mic.utils.SharedFlowBus
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class CKNQ : BaseActivity<ActivityMainBinding, CKOB>(),
     ShadowsocksConnection.Callback,
@@ -54,35 +53,22 @@ class CKNQ : BaseActivity<ActivityMainBinding, CKOB>(),
     var state = CKON.State.Idle
     var stateListener: ((CKON.State) -> Unit)? = null
 
-    //重复点击
-    var repeatClick = false
-    private var jobRepeatClick: Job? = null
+    private var jobNativeAdsDynamic: Job? = null
 
     // 跳转结果页
-    private var liveJumpResultsPage = MutableLiveData<Bundle>()
     private val connection = ShadowsocksConnection(true)
 
     // 是否返回刷新服务器
     var whetherRefreshServer = false
-    private var jobNativeAdsDynamic: Job? = null
 
-    private var homeAdJobDynamic: Job? = null
     override fun initialize() {
         model.setMainCallback(this)
         model.mainCall?.setTitleDataCall()
-        if (model.isIllegalIp()) {
-            model.whetherTheBulletBoxCannotBeUsed(this)
-            return
-        }
-//        val data = _root_ide_package_.com.hcn.dynamicvpn.utils.DynamicUtils.isBuyQuantityBanDynamic()
-//        if (data) {
-//            binding.imgDynamicAdFrame.visibility = View.VISIBLE
-//        } else {
-//            binding.imgDynamicAdFrame.visibility = View.GONE
+//        if (model.isIllegalIp()) {
+//            model.whetherTheBulletBoxCannotBeUsed(this)
+//            return
 //        }
-//        if (model.referData.ope_like == "1") {
-//            judgeVpnScheme()
-//        }
+
         // 连接服务
         connection.connect(this, this)
 
@@ -98,15 +84,19 @@ class CKNQ : BaseActivity<ActivityMainBinding, CKOB>(),
                 GsonUtils.fromJson(serviceData, object : TypeToken<DynamicVpnBean?>() {}.type)
             setFastInformation(currentServerData)
         }
-        showVpnGuideDynamic()
-//        CKNO.nativeAdRefreshDynamic = true
+        model.isShowHomeAd(binding)
+        if (model.referData.Lig_eency == 1) {
+            judgeVpnScheme()
+        }
+        model.mainCall?.showVpnGuideDynamicCall()
     }
 
     override fun initData() {
         model.mainCall?.jumpResultsPageDataCall()
         model.mainCall?.setServiceDataCall()
         model.mainCall?.flowBusFunCall()
-
+        DataUtils.nativeHomeAdRefreshDynamic = true
+        DataUtils.isHotHome = true
     }
 
 
@@ -124,6 +114,30 @@ class CKNQ : BaseActivity<ActivityMainBinding, CKOB>(),
         }
     }
 
+    fun showHomeAd(it: Any) {
+        AdDynamicUtils.showNativeOf(
+            where = DataUtils.ad_home,
+            nativeRoot = binding.flAd,
+            res = it,
+            preload = true,
+            onShowCompleted = {
+                DataUtils.nativeHomeAdRefreshDynamic = false
+            }
+        )
+    }
+
+    fun showConnectAd(it: Any) {
+        AdDynamicUtils.showFullScreenOf(
+            where = DataUtils.ad_connect,
+            context = this,
+            res = it,
+            preload = true,
+            onShowCompleted = {
+                connectOrDisconnectDynamic()
+            }
+        )
+    }
+
     private fun setTitleData() {
         with(binding.inMainTitle) {
             this.tvTitle.text = this@CKNQ.getString(R.string.app_name)
@@ -135,34 +149,6 @@ class CKNQ : BaseActivity<ActivityMainBinding, CKOB>(),
             }
         }
     }
-
-//    private fun initDynamicHomeAd() {
-//        BaseAdLoad.getHomeInstance().whetherToShowDynamic = false
-//        jobNativeAdsDynamic = lifecycleScope.launch {
-//            while (isActive) {
-//                DynamicHomeAd.setDisplayHomeNativeAdDynamic(
-//                    this@CKNO, binding
-//                )
-//                if (BaseAdLoad.getHomeInstance().whetherToShowDynamic) {
-//                    jobNativeAdsDynamic?.cancel()
-//                    jobNativeAdsDynamic = null
-//                }
-//                delay(500L)
-//            }
-//        }
-//    }
-
-//    private fun loadHomeAdDynamic() {
-//        BaseAdLoad.getHomeInstance().whetherToShowDynamic = false
-//        if (BaseAdLoad.getHomeInstance().appAdDataDynamic != null) {
-//            DynamicHomeAd.setDisplayHomeNativeAdDynamic(
-//                this, binding
-//            )
-//        } else {
-//            BaseAdLoad.getHomeInstance().advertisementLoadingDynamic(this)
-//            initDynamicHomeAd()
-//        }
-//    }
 
     private fun jumpResultsPageData() {
         model.liveJumpResultsPage.observe(this, {
@@ -193,14 +179,14 @@ class CKNQ : BaseActivity<ActivityMainBinding, CKOB>(),
 
     fun linkVpn(v: View) {
         if (binding.vpnStateDynamic != 1 && binding.homeGuideDynamic == false) {
-//            _root_ide_package_.com.hcn.dynamicvpn.utils.DynamicUtils.putPointDynamic("ope_dog")
+            DynamicUtils.putPointDynamic("Lig_ordid")
             connect.launch(null)
         }
     }
 
     fun linkServiceGuide(v: View) {
         if (binding.vpnStateDynamic != 1 && binding.homeGuideDynamic == true) {
-//            _root_ide_package_.com.hcn.dynamicvpn.utils.DynamicUtils.putPointDynamic("ope_natureor")
+            DynamicUtils.putPointDynamic("Lig_oarium")
             connect.launch(null)
         }
 
@@ -256,7 +242,6 @@ class CKNQ : BaseActivity<ActivityMainBinding, CKOB>(),
             } else {
                 bundle.putBoolean(DataUtils.whetherDynamicConnected, false)
             }
-//            BaseAdLoad.getBackInstance().advertisementLoadingDynamic(this@CKNO)
             bundle.putString(DataUtils.currentDynamicService, DataUtils.current_server_data_dynamic)
             launchActivityForResult(CKNS::class.java, 0x77, bundle)
         }
@@ -265,14 +250,13 @@ class CKNQ : BaseActivity<ActivityMainBinding, CKOB>(),
     private fun setFastInformation(elVpnBean: DynamicVpnBean) {
         if (elVpnBean.dynamic_best == true) {
             binding.tvMainName.text = "Faster server"
-            binding.imgMainFlag.setImageResource(DynamicUtils.getFlagThroughCountryDynamic("Faster server"))
+            binding.imgMainFlag.setImageResource(DynamicUtils.getFlagCountryDynamic("Faster server"))
         } else {
             binding.tvMainName.text =
                 elVpnBean.dynamic_country.toString() + "-" + elVpnBean.dynamic_city.toString()
-            binding.imgMainFlag.setImageResource(DynamicUtils.getFlagThroughCountryDynamic(elVpnBean.dynamic_country.toString()))
+            binding.imgMainFlag.setImageResource(DynamicUtils.getFlagCountryDynamic(elVpnBean.dynamic_country.toString()))
         }
-//        DataUtils.IP_AFTER_VPN_LINK_POWER = elVpnBean.dynamic_ip ?: ""
-//        DataUtils.IP_AFTER_VPN_CITY_POWER = elVpnBean.dynamic_city ?: ""
+
     }
 
     private val connect = registerForActivityResult(StartService()) {
@@ -283,11 +267,10 @@ class CKNQ : BaseActivity<ActivityMainBinding, CKOB>(),
         if (it) {
             ToastUtils.showLong("no permissions")
         } else {
-//            val permissionData = DataUtils.isPermissionData
-//            if (!permissionData) {
-//                _root_ide_package_.com.hcn.dynamicvpn.utils.DynamicUtils.putPointDynamic("ope_oilless")
-//                DataUtils.isPermissionData = true
-//            }
+            if (!DataUtils.isPermissionDynamicData) {
+                DynamicUtils.putPointDynamic("Lig_yatory")
+                DataUtils.isPermissionDynamicData = true
+            }
             if (NetworkUtils.isConnected()) {
                 model.checkFastData(this, binding, connectVpnFun = {
                     model.mainCall?.startVpnCall()
@@ -302,14 +285,16 @@ class CKNQ : BaseActivity<ActivityMainBinding, CKOB>(),
     }
 
     private fun startVpn() {
-        if (model.isIllegalIp()) {
-            model.whetherTheBulletBoxCannotBeUsed(this)
-            return
-        }
+//        if (model.isIllegalIp()) {
+//            model.whetherTheBulletBoxCannotBeUsed(this)
+//            return
+//        }
         model.mainVpnClick(changeFu = {
             model.mainCall?.changeOfVpnStatusCall(1)
         }, connectFun = {
             connectOrDisconnectDynamic()
+        }, showConnectAd = {
+            showConnectAd(it)
         }, this)
     }
 
@@ -319,7 +304,7 @@ class CKNQ : BaseActivity<ActivityMainBinding, CKOB>(),
             if (!CKNO.isBackDataDynamic) {
                 model.jumpConnectionResultsPage(false)
             }
-            model.mainCall?.changeOfVpnStatusCall(0,true)
+            model.mainCall?.changeOfVpnStatusCall(0, true)
         }
         if (model.isClickState == 0) {
             if (!CKNO.isBackDataDynamic) {
@@ -342,17 +327,15 @@ class CKNQ : BaseActivity<ActivityMainBinding, CKOB>(),
     }
 
     private fun connectionStatusJudgment(state: Boolean) {
-        XLog.e("connectionStatusJudgment=${state}")
         if (model.isClickState == 0 && !state) {
             //vpn连接失败
             XLog.d("vpn连接失败")
-//            DynamicUtils.putPointDynamic("ope_matory")
+            DynamicUtils.putPointDynamic("Lig_sixtic")
             ToastUtils.showLong("connected failed", 3000)
         }
     }
 
     private fun changeOfVpnStatus(state: Int, isPlan: Boolean = false) {
-        XLog.e("changeOfVpnStatus==${state}")
         lifecycleScope.launch {
             binding.vpnStateDynamic = state
             when (binding.vpnStateDynamic) {
@@ -360,7 +343,7 @@ class CKNQ : BaseActivity<ActivityMainBinding, CKOB>(),
                     binding.lavVpn.pauseAnimation()
                     binding.tvState.text = "Connect"
                     binding.tvVpnIcState.text = "START"
-                    DynamicTimeUtils.endTiming()
+                    DynamicTimeUtils.endTiming(isPlan)
                 }
                 1 -> {
                     binding.lavVpn.playAnimation()
@@ -372,7 +355,7 @@ class CKNQ : BaseActivity<ActivityMainBinding, CKOB>(),
                 }
                 2 -> {
                     binding.lavVpn.pauseAnimation()
-                    binding.tvState.text = "Connecting…"
+                    binding.tvState.text = "Conneted"
                     binding.tvVpnIcState.text = "STOP"
                     DynamicTimeUtils.startTiming()
                 }
@@ -384,13 +367,17 @@ class CKNQ : BaseActivity<ActivityMainBinding, CKOB>(),
     override fun stateChanged(state: CKON.State, profileName: String?, msg: String?) {
         CKNO.isConnectType = state.canStop
         if (CKNO.isConnectType) {
+            DynamicUtils.putPointDynamic("Lig_vot")
             XLog.e("连接成功")
+        }
+        if (CKNO.isConnectType && !model.isPlanA) {
+            AdBaseUtils.loadAllAd()
+            model.isPlanA = true
         }
         changeState(state)
     }
 
     override fun onServiceConnected(service: IShadowsocksService) {
-        XLog.e("onServiceConnected")
         CKNO.isConnectType = CKON.State.values()[service.state].canStop
         if (CKNO.isConnectType) {
             model.mainCall?.changeOfVpnStatusCall(2)
@@ -415,17 +402,24 @@ class CKNQ : BaseActivity<ActivityMainBinding, CKOB>(),
         connection.bandwidthTimeout = 500
     }
 
-    override fun onResume() {
-        super.onResume()
-        lifecycleScope.launch {
-            delay(300)
-            if (lifecycle.currentState != Lifecycle.State.RESUMED) {
-                return@launch
+
+    private fun showHomeAdFun() {
+        jobNativeAdsDynamic?.cancel()
+        jobNativeAdsDynamic = null
+        jobNativeAdsDynamic = lifecycleScope.launch {
+            while (true) {
+                if (!isActive) {
+                    break
+                }
+                AdDynamicUtils.resultOf(DataUtils.ad_home)?.let {
+                    cancel()
+                    jobNativeAdsDynamic = null
+                    showHomeAd(it)
+                }
+                delay(500L)
             }
-//            model.viewModelOnResume({ judgeVpnScheme() }, { loadHomeAdDynamic() })
         }
     }
-
 
     override fun onStop() {
         super.onStop()
@@ -434,7 +428,6 @@ class CKNQ : BaseActivity<ActivityMainBinding, CKOB>(),
         model.viewModelStop(binding, changeFu = {
             model.mainCall?.changeOfVpnStatusCall(it)
         })
-
     }
 
     override fun onDestroy() {
@@ -445,9 +438,33 @@ class CKNQ : BaseActivity<ActivityMainBinding, CKOB>(),
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        lifecycleScope.launch {
+            delay(300)
+            if (lifecycle.currentState != Lifecycle.State.RESUMED) {
+                return@launch
+            }
+            AdDynamicUtils.loadOf(
+                where = DataUtils.ad_home
+            )
+            DynamicUtils.putPointDynamic("Lig_plint")
+            if (DataUtils.nativeHomeAdRefreshDynamic) {
+                if (DataUtils.isHotHome && model.referData.Lig_eency == 2) {
+                    judgeVpnScheme()
+                }
+                showHomeAdFun()
+            }
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 0x78) {
+            DataUtils.isHotHome = false
+        }
         if (requestCode == 0x78 && whetherRefreshServer) {
+            DataUtils.isHotHome = false
             model.mainCall?.onActivityResultFunCall()
         }
     }
@@ -469,6 +486,13 @@ class CKNQ : BaseActivity<ActivityMainBinding, CKOB>(),
                     binding.dhType = false
                     return false
                 }
+                if (model.isClickState == 2 && binding.vpnStateDynamic == 1) {
+                    model.cancelJob()
+                    model.viewModelStop(binding, changeFu = {
+                        model.mainCall?.changeOfVpnStatusCall(it)
+                    })
+                    return false
+                }
                 if (!(!CKNO.isConnectType && binding.vpnStateDynamic == 1)) {
                     finish()
                 }
@@ -480,10 +504,10 @@ class CKNQ : BaseActivity<ActivityMainBinding, CKOB>(),
     fun showVpnGuideDynamic() {
         lifecycleScope.launch {
             delay(400)
-            if (!CKNO.isConnectType) {
+            if (!CKNO.isConnectType && model.isPlanA) {
                 binding.homeGuideDynamic = true
                 binding.lavViewGu.playAnimation()
-//                DynamicUtils.putPointDynamic("ope_irship")
+                DynamicUtils.putPointDynamic("Lig_archa")
             } else {
                 binding.homeGuideDynamic = false
             }
@@ -557,67 +581,61 @@ class CKNQ : BaseActivity<ActivityMainBinding, CKOB>(),
         onActivityResultFun()
     }
 
-//    /**
-//     * 判断Vpn方案
-//     */
-//    private fun judgeVpnScheme() {
-//        if (CKNO.isConnectType) {
-//            return
-//        }
-//        if (!model.isItABuyingUser()) {
-//            //非买量用户直接走BE方案
-//            model.isPlanA = true
-//            return
-//        }
-//        val data = model.referData.ope_photo
-//        if (data.isEmpty()) {
-//            XLog.d("判断Vpn方案---默认")
-//            vpnCScheme("50")
-//        } else {
-//            //CKNO
-//            vpnCScheme(data)
-//        }
-//    }
-//
-//    /**
-//     * vpn B 方案
-//     */
-//    private fun vpnBScheme() {
-//        DynamicUtils.putPointDynamic("ope_summ")
-//        lifecycleScope.launch {
-//            delay(300)
-//            XLog.d("CKNO.isConnectType=${CKNO.isConnectType}")
-//            if (!CKNO.isConnectType) {
-//                connect.launch(null)
-//            }
-//        }
-//    }
-//
-//    /**
-//     * vpn CKNO 方案
-//     * 概率
-//     */
-//    private fun vpnCScheme(mProbability: String) {
-//        val mProbabilityInt = mProbability.toIntOrNull()
-//        if (mProbabilityInt == null) {
-//            model.isPlanA = true
-//        } else {
-//            val random = (1..100).shuffled().last()
-//            when {
-//                random <= mProbabilityInt -> {
-//                    //B
-//                    XLog.d("随机落在B方案")
-//                    model.isPlanA = false
-//                    vpnBScheme() //20，代表20%为B用户；80%为BE用户
-//                }
-//                else -> {
-//                    //CKNO
-//                    XLog.d("随机落在BE方案")
-//                    model.isPlanA = true
-//                }
-//            }
-//        }
-//    }
+    /**
+     * 判断Vpn方案
+     */
+    private fun judgeVpnScheme() {
+        if (CKNO.isConnectType) {
+            return
+        }
+        if (!DynamicUtils.isValuableUser(DynamicUtils.getLocalLifKeepiData())) {
+            //非买量用户直接走BE方案
+            model.isPlanA = true
+            return
+        }
+        val data = model.referData.Lig_suav
+        if (data == null) {
+            XLog.d("判断Vpn方案---默认")
+            vpnCScheme(50)
+        } else {
+            //CKNO
+            vpnCScheme(data)
+        }
+    }
 
+    /**
+     * vpn B 方案
+     */
+    private fun vpnBScheme() {
+        DynamicUtils.putPointDynamic("Lig_tonssu")
+        lifecycleScope.launch {
+            delay(300)
+            XLog.d("CKNO.isConnectType=${CKNO.isConnectType}")
+            if (!CKNO.isConnectType) {
+                connect.launch(null)
+            }
+        }
+    }
+
+    /**
+     * vpn CKNO 方案
+     * 概率
+     */
+    private fun vpnCScheme(mProbability: Int) {
+        val random = (1..100).shuffled().last()
+        when {
+            random <= mProbability -> {
+                //B
+                XLog.d("随机落在B方案")
+                model.isPlanA = false
+                vpnBScheme() //20，代表20%为B用户；80%为BE用户
+            }
+            else -> {
+                //CKNO
+                XLog.d("随机落在BE方案")
+                model.isPlanA = true
+            }
+        }
+    }
 
 }

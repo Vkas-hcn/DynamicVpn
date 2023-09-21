@@ -1,0 +1,104 @@
+{
+  "Lig_acity": 30,
+  "Lig_ophit": 1,
+  "Lig_anth": [
+    {
+      "Lig_hster": "oaire",
+      "Lig_minen": "admob",
+      "Lig_thful": "ca-app-pub-3940256099942544/3419835294",
+      "Lig_ofag": 2
+    },
+    {
+      "Lig_hster": "homise",
+      "Lig_minen": "admob",
+      "Lig_thful": "ca-app-pub-3940256099942544/1033173712",
+      "Lig_ofag": 1
+    },
+    {
+      "Lig_hster": "oaire",
+      "Lig_minen": "admob",
+      "Lig_thful": "ca-app-pub-3940256099942544/3419835294zzz",
+      "Lig_ofag": 5
+    }
+  ],
+  "Lig_fari": [
+    {
+      "Lig_hster": "rise",
+      "Lig_minen": "admob",
+      "Lig_thful": "ca-app-pub-3940256099942544/2247696110",
+      "Lig_ofag": 2
+    },
+    {
+      "Lig_hster": "rise",
+      "Lig_minen": "admob",
+      "Lig_thful": "ca-app-pub-3940256099942544/1044960115",
+      "Lig_ofag": 1
+    },
+    {
+      "Lig_hster": "rise",
+      "Lig_minen": "admob",
+      "Lig_thful": "ca-app-pub-3940256099942544/2247696110xxx",
+      "Lig_ofag": 5
+    }
+  ],
+  "Lig_fusia": [
+    {
+      "Lig_hster": "rise",
+      "Lig_minen": "admob",
+      "Lig_thful": "ca-app-pub-3940256099942544/2247696110",
+      "Lig_ofag": 1
+    },
+    {
+      "Lig_hster": "rise",
+      "Lig_minen": "admob",
+      "Lig_thful": "ca-app-pub-3940256099942544/2247696110xxx",
+      "Lig_ofag": 5
+    },
+    {
+      "Lig_hster": "rise",
+      "Lig_minen": "admob",
+      "Lig_thful": "ca-app-pub-3940256099942544/1044960115",
+      "Lig_ofag": 2
+    }
+  ],
+  "Lig_plum": [
+    {
+      "Lig_hster": "homise",
+      "Lig_minen": "admob",
+      "Lig_thful": "ca-app-pub-3940256099942544/1033173712xx",
+      "Lig_ofag": 5
+    },
+    {
+      "Lig_hster": "homise",
+      "Lig_minen": "admob",
+      "Lig_thful": "ca-app-pub-3940256099942544/8691691433",
+      "Lig_ofag": 1
+    },
+    {
+      "Lig_hster": "homise",
+      "Lig_minen": "admob",
+      "Lig_thful": "ca-app-pub-3940256099942544/1033173712",
+      "Lig_ofag": 2
+    }
+  ],
+  "Lig_pulch": [
+    {
+      "Lig_hster": "homise",
+      "Lig_minen": "admob",
+      "Lig_thful": "ca-app-pub-3940256099942544/8691691433",
+      "Lig_ofag": 2
+    },
+    {
+      "Lig_hster": "homise",
+      "Lig_minen": "admob",
+      "Lig_thful": "ca-app-pub-3940256099942544/1033173712",
+      "Lig_ofag": 1
+    },
+    {
+      "Lig_hster": "homise",
+      "Lig_minen": "admob",
+      "Lig_thful": "ca-app-pub-3940256099942544/1033173712xxx",
+      "Lig_ofag": 5
+    }
+  ]
+}

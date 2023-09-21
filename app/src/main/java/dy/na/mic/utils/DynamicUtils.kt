@@ -1,18 +1,32 @@
 package dy.na.mic.utils
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
+import com.android.installreferrer.api.InstallReferrerClient
+import com.android.installreferrer.api.InstallReferrerStateListener
 import com.blankj.utilcode.util.GsonUtils
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ResourceUtils
+import com.elvishew.xlog.XLog
+import com.facebook.appevents.AppEventsLogger
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
 import com.google.gson.reflect.TypeToken
+import dy.na.mic.BuildConfig
 import dy.na.mic.R
+import dy.na.mic.bean.DynamicAdBean
+import dy.na.mic.bean.DynamicRefBean
 import dy.na.mic.bean.DynamicVpnBean
+import dy.na.mic.bean.LigEatateBean
 import dy.na.mic.data.DataUtils
+import kotlinx.coroutines.*
 import okhttp3.*
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.Charset
+import java.util.*
 
 object DynamicUtils {
     fun getFastIpDynamic(): DynamicVpnBean {
@@ -42,37 +56,11 @@ object DynamicUtils {
 
 
     private fun getLocalFastServerData(): MutableList<String> {
-        return  GsonUtils.fromJson(
+        return GsonUtils.fromJson(
             ResourceUtils.readAssets2String("dynamic_fast.json"),
             object : TypeToken<MutableList<String>>() {}.type
         )
     }
-
-//    fun getIpInformation11() {
-//        val sb = StringBuffer()
-//        try {
-//            val url = URL("https://ip.seeip.org/geoip/")
-//            val conn = url.openConnection() as HttpURLConnection
-//            conn.requestMethod = "GET"
-//            conn.connectTimeout = 10000
-//            val code = conn.responseCode
-//            if (code == 200) {
-//                val `is` = conn.inputStream
-//                val b = ByteArray(1024)
-//                var len: Int
-//                while (`is`.read(b).also { len = it } != -1) {
-//                    sb.append(String(b, 0, len, Charset.forName("UTF-8")))
-//                }
-//                `is`.close()
-//                conn.disconnect()
-//                LogUtils.e("state", "sb==$sb")
-//                DataUtils.IP_INFORMATION_DYNAMIC = sb.toString()
-//            }
-//        } catch (var1: Exception) {
-//            LogUtils.e("state", "Exception==${var1.message}")
-//            getIpInformation2()
-//        }
-//    }
 
 
     fun getIpInformation() {
@@ -106,13 +94,10 @@ object DynamicUtils {
 
     fun getIpInformation2() {
         val url = "https://api.myip.com/"
-
         val client = OkHttpClient()
-
         val request = Request.Builder()
             .url(url)
             .build()
-
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
@@ -131,38 +116,173 @@ object DynamicUtils {
         })
     }
 
+    fun getLocalAdData(): DynamicAdBean {
+        val listType = object : TypeToken<DynamicAdBean>() {}.type
+        return runCatching {
+            GsonUtils.fromJson<DynamicAdBean>(
+                DataUtils.ad_dynamic_data,
+                listType
+            )
+        }.getOrNull() ?: GsonUtils.fromJson(
+            ResourceUtils.readAssets2String("dynamic_ad.json"),
+            object : TypeToken<DynamicAdBean?>() {}.type
+        )
+    }
 
-//    fun getIpInformation2() {
-//        val sb = StringBuffer()
-//        try {
-//            val url = URL("https://api.myip.com/")
-//            val conn = url.openConnection() as HttpURLConnection
-//            conn.requestMethod = "GET"
-//            conn.connectTimeout = 10000
-//            val code = conn.responseCode
-//            if (code == 200) {
-//                val `is` = conn.inputStream
-//                val b = ByteArray(1024)
-//                var len: Int
-//                while (`is`.read(b).also { len = it } != -1) {
-//                    sb.append(String(b, 0, len, Charset.forName("UTF-8")))
-//                }
-//                `is`.close()
-//                conn.disconnect()
-//                LogUtils.e("state", "sb2==$sb")
-//                DataUtils.IP_INFORMATION_DYNAMIC2 = sb.toString()
-//            } else {
-//                LogUtils.e("state", "code2==$code")
-//            }
-//        } catch (var1: Exception) {
-//            LogUtils.e("state", "Exception2==${var1.message}")
-//        }
-//    }
+    fun getLocalVpnReferData(): DynamicRefBean {
+        val listType = object : TypeToken<DynamicRefBean>() {}.type
+        return runCatching {
+            GsonUtils.fromJson<DynamicRefBean>(
+                DataUtils.dynamic_ref,
+                listType
+            )
+        }.getOrNull() ?: GsonUtils.fromJson(
+            ResourceUtils.readAssets2String("dynamic_ref.json"),
+            object : TypeToken<DynamicRefBean?>() {}.type
+        )
+    }
 
-    /**
-     * 通过国家获取国旗
-     */
-    fun getFlagThroughCountryDynamic(img: String): Int {
+    fun getLocalLifKeepiData(): LigEatateBean {
+        val listType = object : TypeToken<LigEatateBean>() {}.type
+        return runCatching {
+            GsonUtils.fromJson<LigEatateBean>(
+                DataUtils.con_dynamic_data,
+                listType
+            )
+        }.getOrNull() ?: GsonUtils.fromJson(
+            ResourceUtils.readAssets2String("dynamic_con.json"),
+            listType
+        )
+    }
+    var referJobDynamic: Job? = null
+
+
+     fun getReferInformationDynamic(context: Context) {
+        referJobDynamic?.cancel()
+        referJobDynamic = GlobalScope.launch {
+            while (isActive) {
+                if (!isActive) {
+                    break
+                }
+                if (DataUtils.install_referrer_dynamic == "") {
+                    referrerDynamic(context)
+                } else {
+                    cancel()
+                    referJobDynamic = null
+                }
+                delay(10000)
+            }
+        }
+    }
+    fun referrerDynamic(
+        context: Context,
+    ) {
+        var installReferrerDynaMic = ""
+        if (DataUtils.install_referrer_dynamic != "") {
+            return
+        }
+        if (BuildConfig.DEBUG) {
+//            installReferrerDynaMic = "gclid"
+            installReferrerDynaMic = "fb4a"
+            DataUtils.install_referrer_dynamic = installReferrerDynaMic
+        }
+        try {
+            val referrerClient = InstallReferrerClient.newBuilder(context).build()
+            referrerClient.startConnection(object : InstallReferrerStateListener {
+                override fun onInstallReferrerSetupFinished(p0: Int) {
+                    when (p0) {
+                        InstallReferrerClient.InstallReferrerResponse.OK -> {
+                            installReferrerDynaMic =
+                                referrerClient.installReferrer.installReferrer ?: ""
+//                            DataUtils.install_referrer_dynamic = installReferrerDynaMic
+                            XLog.e("TAG", "installReferrer====${installReferrerDynaMic}")
+                            putPointDynamic("Lig_etoio")
+                            referrerClient.endConnection()
+                            return
+                        }
+                        else -> {
+                            referrerClient.endConnection()
+                        }
+                    }
+                }
+
+                override fun onInstallReferrerServiceDisconnected() {
+                }
+            })
+        } catch (e: Exception) {
+        }
+    }
+
+    fun isFacebookUser(ligEatateBean: LigEatateBean): Boolean {
+        val referrer = DataUtils.install_referrer_dynamic
+        return (ligEatateBean.Lig_attorney == "1" && referrer.contains("fb4a", true))
+                || (ligEatateBean.Lig_attorney == "1" && referrer.contains("facebook", true))
+    }
+
+    fun isValuableUser(ligEatateBean: LigEatateBean): Boolean {
+        val referrer = DataUtils.install_referrer_dynamic
+        return isFacebookUser(ligEatateBean)
+                || (ligEatateBean.Lig_senee == "1" && referrer.contains("gclid", true))
+                || (ligEatateBean.Lig_meteron == "1" && referrer.contains("not%20set", true))
+                || (ligEatateBean.Lig_kindcy == "1" && referrer.contains("youtubeads", true))
+                || (ligEatateBean.Lig_armform == "1" && referrer.contains("%7B%22", true))
+                || (ligEatateBean.Lig_jacfic == "1" && referrer.contains("adjust", true))
+                || (ligEatateBean.Lig_haurion == "1" && referrer.contains("bytedance", true))
+    }
+
+    fun isBuyQuantityBanDynamic(): Boolean {
+        val localVpnBootData = getLocalVpnReferData()
+        val ligEatateBean = getLocalLifKeepiData()
+        if (!isToBlockScreenAdsDynamic(localVpnBootData.Lig_anyone ?: 3, ligEatateBean)) {
+            return true
+        }
+        return false
+    }
+
+    fun isToBlockScreenAdsDynamic(onlineRef: Int, ligEatateBean: LigEatateBean): Boolean {
+        when (onlineRef) {
+            1 -> {
+                return true
+            }
+            2 -> {
+                return isValuableUser(ligEatateBean)
+            }
+            3 -> {
+                return isFacebookUser(ligEatateBean)
+            }
+            4 -> {
+                return false
+            }
+            else -> {
+                return true
+            }
+        }
+    }
+
+    fun putPointDynamic(name: String) {
+        if (BuildConfig.DEBUG) {
+            XLog.d("触发埋点----name=${name}")
+        } else {
+            Firebase.analytics.logEvent(name, null)
+        }
+    }
+
+
+    fun putPointTimeDynamic(name: String, time: Int) {
+        if (BuildConfig.DEBUG) {
+            XLog.d("触发埋点----name=${name}---time=${time}")
+        } else {
+            Firebase.analytics.logEvent(name, bundleOf("time" to time))
+        }
+    }
+
+    fun putPointAdValueDynamic(adValue: Long, context: Context) {
+        AppEventsLogger.newLogger(context).logPurchase(
+            (adValue / 1000000.0).toBigDecimal(), Currency.getInstance("USD")
+        )
+    }
+
+    fun getFlagCountryDynamic(img: String): Int {
         when (img) {
             "Fast" -> {
                 return R.drawable.ic_fast

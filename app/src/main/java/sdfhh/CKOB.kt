@@ -38,6 +38,9 @@ import androidx.lifecycle.lifecycleScope
 import com.blankj.utilcode.util.*
 import sdfhl.CKOJ
 import com.github.shadowsocks.aidl.ShadowsocksConnection
+import dy.na.mic.ad.AdBaseUtils
+import dy.na.mic.ad.AdDynamicUtils
+import dy.na.mic.bean.DynamicRefBean
 import sdfhm.CKON
 import sdfhf.CKNO
 import dy.na.mic.databinding.ActivityMainBinding
@@ -51,10 +54,11 @@ class CKOB : BaseViewModel() {
     fun setMainCallback(mainCall: CKOC) {
         this.mainCall = mainCall
     }
-//    val referData: OpePalliBean = PowerUtils.getLocalVpnReferData()
-//    var isPlanA = true
+
+    val referData: DynamicRefBean = DynamicUtils.getLocalVpnReferData()
+    var isPlanA = true
     var isClickState: Int = 1
-    private var jobStartPower: Job? = null
+    private var jobStartDynamic: Job? = null
 
     //初始化服务器数据
     val liveInitializeServerData: MutableLiveData<DynamicVpnBean> by lazy {
@@ -120,9 +124,15 @@ class CKOB : BaseViewModel() {
         }
     }
 
-    /**
-     * 设置服务器数据
-     */
+    fun isShowHomeAd(binding: ActivityMainBinding) {
+        val data = DynamicUtils.isBuyQuantityBanDynamic()
+        if (data) {
+            binding.flAd.visibility = View.GONE
+        } else {
+            binding.flAd.visibility = View.VISIBLE
+        }
+    }
+
     private fun setSkServerData(profile: Profile, bestData: DynamicVpnBean): Profile {
         profile.name = bestData.dynamic_country + "-" + bestData.dynamic_city
         profile.host = bestData.dynamic_ip.toString()
@@ -212,43 +222,25 @@ class CKOB : BaseViewModel() {
     fun startConnectVpn() {
         if (!CKNO.isConnectType) {
             CKOJ.startService()
-            XLog.e( "开始连接")
-//            PowerUtils.putPointPower("ope_lyular")
+            XLog.e("开始连接")
+            DynamicUtils.putPointDynamic("Lig_pattern")
         }
     }
 
     fun startDisConnectVpn() {
         if (CKNO.isConnectType) {
             CKOJ.stopService()
-            XLog.e( "开始断开")
-//            PowerUtils.putPointPower("ope_orium")
+            XLog.e("开始断开")
+            DynamicUtils.putPointDynamic("Lig_teache")
         }
-    }
-
-//    /**
-//     * 是否是买量用户
-//     */
-//    fun isItABuyingUser(): Boolean {
-//        return PowerUtils.isValuablePower()
-//    }
-
-    fun viewModelOnResume(judgeFun: () -> Unit, loadHomeAdFun: () -> Unit) {
-//        PowerUtils.putPointPower("ope_nress")
-//        if (BE.nativeAdRefreshPower) {
-//            if (referData.ope_like == "2") {
-//                judgeFun()
-//            }
-//            loadHomeAdFun()
-//            BE.nativeAdRefreshPower = false
-//        }
     }
 
     fun viewModelStop(binding: ActivityMainBinding, changeFu: (state: Int) -> Unit) {
         if (isClickState == 0 && binding.vpnStateDynamic == 1) {
-//            PowerUtils.putPointPower("ope_able")
+            DynamicUtils.putPointDynamic("Lig_itive")
         }
         if (isClickState == 2 && binding.vpnStateDynamic == 1) {
-//            PowerUtils.putPointPower("ope_viscosiia")
+            DynamicUtils.putPointDynamic("Lig_muniu")
         }
         if (CKNO.isConnectType) {
             changeFu(2)
@@ -260,6 +252,7 @@ class CKOB : BaseViewModel() {
     fun mainVpnClick(
         changeFu: (state: Int) -> Unit,
         connectFun: () -> Unit,
+        showConnectAd: (it: Any) -> Unit,
         activity: AppCompatActivity
     ) {
         changeFu(1)
@@ -268,52 +261,52 @@ class CKOB : BaseViewModel() {
         } else {
             0
         }
-        jobStartPower?.cancel()
-        jobStartPower = null
-        jobStartPower = activity.lifecycleScope.launch {
-//            if (CKNO.isConnectType) {
-//                PowerUtils.detectingAdPowerLoading(activity)
-//            }
-//            if (isPlanA && !CKNO.isConnectType) {
-//                BaseAdLoad.getConnectInstance().advertisementLoadingPower(activity)
-//                BaseAdLoad.getResultInstance().advertisementLoadingPower(activity)
-//                BaseAdLoad.getBackInstance().advertisementLoadingPower(activity)
-//            }
+        jobStartDynamic?.cancel()
+        jobStartDynamic = null
+        jobStartDynamic = activity.lifecycleScope.launch {
+            if (CKNO.isConnectType) {
+                AdBaseUtils.disConnectLoadAllAd()
+            }
+            if (isPlanA && !CKNO.isConnectType) {
+                AdDynamicUtils.loadOf(DataUtils.ad_connect)
+                AdDynamicUtils.loadOf(DataUtils.ad_result)
+                AdDynamicUtils.loadOf(DataUtils.ad_back)
+            }
             delay(2000L)
-//            if (!isPlanA && !CKNO.isConnectType) {
-//                PowerUtils.clearAllAdsReload()
-//            }
+            if (!isPlanA && !CKNO.isConnectType) {
+                AdDynamicUtils.clearAllAds()
+            }
             startConnectVpn()
-//            try {
-//                withTimeout(2000L) {
-//                    delay(300L)
-//                    while (isActive) {
-//                        when (PowerConnectAd.displayConnectAdvertisementPower(activity)) {
-//                            "22" -> {
-//                                jobStartPower?.cancel()
-//                                jobStartPower = null
-//                            }
-//                            "100" -> {
-//                                jobStartPower?.cancel()
-//                                jobStartPower = null
-//                                connectFun()
-//                            }
-//                        }
-//                        delay(500L)
-//                    }
-//                }
-//            } catch (e: TimeoutCancellationException) {
-//                XLog.d("connect---插屏超时")
-//                connectFun()
-//            }
-            connectFun()
+            try {
+                withTimeout(10000L) {
+                    delay(300L)
+                    while (true) {
+                        if (!isActive) {
+                            break
+                        }
+                        if (DynamicUtils.isBuyQuantityBanDynamic()) {
+                            cancel()
+                            connectFun()
+                        }
+                        AdDynamicUtils.resultOf(DataUtils.ad_connect)?.let {
+                            cancel()
+                            jobStartDynamic = null
+                            showConnectAd(it)
+                        }
+                        delay(500L)
+                    }
+                }
+            } catch (e: TimeoutCancellationException) {
+                XLog.d("connect---插屏超时")
+                connectFun()
+            }
 
         }
     }
 
     fun cancelJob() {
-        jobStartPower?.cancel()
-        jobStartPower = null
+        jobStartDynamic?.cancel()
+        jobStartDynamic = null
     }
 
     fun imgBackClick(binding: ActivityMainBinding, changeFu: (state: Int) -> Unit) {
@@ -341,13 +334,21 @@ class CKOB : BaseViewModel() {
         }
     }
 
-    fun checkServerData(activity: AppCompatActivity,binding: ActivityMainBinding,startTheJudgmentFun: (isHaveData: Boolean) -> Unit) {
+    fun checkServerData(
+        activity: AppCompatActivity,
+        binding: ActivityMainBinding,
+        startTheJudgmentFun: (isHaveData: Boolean) -> Unit
+    ) {
         activity.lifecycleScope.launch {
             startTheJudgmentFun(true)
         }
     }
 
-    fun checkFastData(activity: AppCompatActivity,binding: ActivityMainBinding,connectVpnFun: () -> Unit) {
+    fun checkFastData(
+        activity: AppCompatActivity,
+        binding: ActivityMainBinding,
+        connectVpnFun: () -> Unit
+    ) {
         activity.lifecycleScope.launch {
             connectVpnFun()
         }
